@@ -2,7 +2,7 @@ import { getApiEndpoints, endPoints } from "./apiEndPoints"
 
 const getOptions = async () => {
     try {
-      const response = await fetch('/api/languages');
+      const response = await fetch('http://127.0.0.1:8000/languages');
       if (!response.ok) {
         throw new Error('Error while fetching Language Options !!!');
       }
@@ -22,7 +22,7 @@ const getOptions = async () => {
     };
   
     try {
-      const response = await fetch('/api/translate', {
+      const response = await fetch('http://127.0.0.1:8000/translate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const getVoiceForText = async (text, language) => {
         text: text,
         lang: language,
      }
-    const url = '/api/textToSpeech'
+    const url = 'http://127.0.0.1:8000/textToSpeech'
     try {
         const response = await fetch(url, {
             method : 'POST',

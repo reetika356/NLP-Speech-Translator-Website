@@ -11,7 +11,7 @@ const Logo = () => {
     w = 'max-content'
     alignSelf={'center'}
     >
-      Translator.AI
+     HearLink
     </Text>
   )
 }

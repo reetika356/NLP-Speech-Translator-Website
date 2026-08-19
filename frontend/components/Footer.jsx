@@ -14,7 +14,7 @@ const Footer = () => {
        fontSize={'x-large'}
        fontWeight ='medium'
        color={'white'}
-       >Made By Aditya Mishra.</Text>
+       >.</Text>
     </Box>
   )
 }
