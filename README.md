@@ -1,15 +1,14 @@
+# NLP Speech Recognition and Translation Project
 
-
-# NLP Speech Recognition and Translation Project [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 **Welcome to the NLP Speech Recognition and Translation Project!** 🌍🔊
 
-In today's globalized world, effective communication across different languages is more important than ever. Our project addresses this need by providing a seamless and intuitive solution for real-time speech translation and text-to-speech conversion. Whether you're traveling, working with international teams, or learning a new language, our application is designed to make language barriers a thing of the past.
+This project aims to make communication across different languages easier through speech recognition, text translation, and text-to-speech conversion. It provides a simple interface for translating spoken or typed text between languages.
 
-**Access the hosted project**
- 
-[Hosted Speech Translator Website](https://nlp-speech-translator-website.vercel.app/)
+## Hosted Project
 
+[Open the Speech Translator Website](https://nlp-speech-translator-website.vercel.app/)
 
 ![Project Screenshot](assets/project-image-desktop.png)
 
@@ -27,192 +26,172 @@ In today's globalized world, effective communication across different languages 
 
 ## Features
 
-- **Speech to Text Translation** 🎤➡️📝: Speak in your native language, and watch as your words are translated into text in another language in real-time.
-- **Text to Speech Conversion** 📝➡️🔊: Convert written text into natural-sounding speech in both the source and target languages.
-- **Manual Text Input** 🖊️: Double-click on the editor to manually enter text if you prefer typing over speaking.
-- **Copy Text Functionality** 📋: Easily copy the translated text with a single click.
-- **User-Friendly Interface** 🖥️: Our application features a clean and intuitive UI built with Chakra UI, ensuring a smooth user experience.
+- **Speech-to-Text Translation:** Convert spoken words into text and translate them into another language.
+- **Text-to-Speech Conversion:** Convert written text into speech.
+- **Manual Text Input:** Enter text manually when you prefer typing.
+- **Copy Text:** Copy translated text easily.
+- **User-Friendly Interface:** An intuitive interface built with web technologies.
 
 ## Technologies Used
 
-<p align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=git,docker,react,js,css,html,fastapi,vscode,github,nodejs,npm,nextjs,python" />
-  </a>
-</p>
-
 ### Frontend
 
-- **Next.js**: A React framework for server-side rendering and static site generation.
-- **React**: A JavaScript library for building user interfaces.
-- **Chakra UI**: A simple, modular, and accessible component library that gives you the building blocks to build React applications.
+- Next.js
+- React
+- Chakra UI
 
 ### Backend
 
-- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python.
-- **Google Translator**: Library for translating text.
-- **gTTS (Google Text-to-Speech)**: A Python library and CLI tool to interface with Google Translate’s text-to-speech API.
+- FastAPI
+- Google Translator (`googletrans`)
+- Google Text-to-Speech (`gTTS`)
 
-### Containerization
+### Other Tools
 
-- **Docker**: Containerization platform to package applications and their dependencies.
+- Python
+- JavaScript
+- Node.js and npm
+- Git and GitHub
+- Docker
 
 ## Project Structure
 
-```plaintext
+```text
 .
-├── backend
-│   ├── Dockerfile
+├── backend/
 │   ├── app.py
 │   ├── requirements.txt
-├── frontend
-│   ├── Dockerfile
+│   └── Dockerfile
+├── frontend/
 │   ├── package.json
-│   ├── public
-│   ├── app
-│   │   ├── api
-│   │   ├── pages
-|   ├── components
-├── docker-compose.yml
+│   ├── public/
+│   └── app/
+├── esp32_firmware/
+├── mic_client.html
+├── requirements.txt
+└── README.md
 ```
+
+*The structure above is a simplified overview. Some files may differ depending on the current project version.*
 
 ## Installation
 
 ### Prerequisites
 
-- **Docker**: Make sure Docker is installed and running on your machine.
-- **Node.js**: Node 18+ is required if running the frontend manually.
+- Python 3.10 or another compatible Python version
+- Node.js and npm
+- Git
+- Docker (optional)
 
-### Running with Docker
+### 1. Clone the Repository
 
-1. Clone the repository:
+```bash
+git clone https://github.com/reetika356/NLP-Speech-Translator-Website.git
+cd NLP-Speech-Translator-Website
+```
 
-   ```sh
-   git clone https://github.com/Aditya-Mishra799/NLP-Speech-Translator-Website.git
-   cd NLP-Speech-Translator-Website
-   ```
+### 2. Set Up the Backend
 
-2. Build and start the containers:
+Open a terminal in the project directory and run:
 
-   ```sh
-   docker-compose up --build -d
-   ```
+```bash
+cd backend
+pip install -r requirements.txt
+```
 
-3. Access the application:
+Configure the required environment variables before starting the backend.
 
-   - Frontend: `http://localhost:3000`
-   - Backend: `http://localhost:8000`
+For example, if your application uses Deepgram, set `DEEPGRAM_API_KEY` in your local environment. Never publish API keys or passwords in the repository.
 
-### Running Manually (skip if using Docker)
+Start the backend using:
 
-#### Backend
+```bash
+python -m uvicorn app:app --reload --host 0.0.0.0 --port 8000
+```
 
-1. Navigate to the backend directory:
+### 3. Set Up the Frontend
 
-   ```sh
-   cd backend
-   ```
+Open another terminal:
 
-2. Install dependencies:
+```bash
+cd frontend
+npm install
+```
 
-   ```sh
-   pip install -r requirements.txt
-   ```
+If the frontend requires a backend URL, create a `.env.local` file inside the `frontend` directory and configure the variable expected by your application. For example:
 
-3. Start the backend server:
+```env
+NEXT_PUBLIC_TRANSLATOR_API_URL=http://localhost:8000
+```
 
-   ```sh
-   uvicorn app:app --host 0.0.0.0 --port 8000
-   ```
+Start the frontend:
 
-#### Frontend
+```bash
+npm run dev
+```
 
-1. Navigate to the frontend directory:
+Open the local frontend address shown by the development server, commonly `http://localhost:3000`.
 
-   ```sh
-   cd frontend
-   ```
+### 4. Run with Docker
 
-2. Add a `.env.local` file in the root (frontend).
+If your Docker configuration is set up for the current project, you can use:
 
-3. In the `.env.local` file, add the following environment variable for the frontend to access the backend API:
-
-   ```sh
-   # Or you may add the IP at which the Python backend is running here
-   NEXT_PUBLIC_TRANSLATOR_API_URL=http://localhost:8000
-   ```
-
-4. Install dependencies:
-
-   ```sh
-   npm install
-   ```
-
-5. Start the frontend server:
-
-   ```sh
-   npm run dev
-   ```
-
-6. Access the frontend:
-
-   - Frontend: `http://localhost:3000`
+```bash
+docker compose up --build
+```
 
 ## Usage
 
-- **Speak to Translate**: Click the microphone icon to start speaking. The spoken words will be translated into text in the target language.
-- **Text to Speech**: Click the speaker icon to convert text to speech in the selected language.
-- **Manual Text Input**: Double-click the editor to enter text manually.
-- **Copy Text**: Use the copy button to copy translated text.
+1. Start the backend and frontend.
+2. Open the website in your browser.
+3. Select the source and target languages.
+4. Speak into the microphone or enter text manually.
+5. View the translated text.
+6. Use the text-to-speech feature to listen to the result.
+7. Copy the translated text when needed.
+
+Available functionality depends on the current implementation and configuration.
 
 ## Configuration
 
 ### Environment Variables
 
-The `docker-compose.yml` file includes environment variables for the frontend service. These variables are set to interact with the backend service running at `http://172.17.0.1:8000`.
+Keep API keys and other secrets in local environment variables or ignored `.env` files.
 
-```yaml
-environment:
-  - NEXT_PUBLIC_TRANSLATOR_API_URL=http://172.17.0.1:8000
-```
+Do not commit the following:
 
-You can modify these values based on your setup.
+- API keys
+- Wi-Fi passwords
+- `.env` files containing secrets
+- Virtual environments
+- Generated build files
+
+If you change the backend's address or port, update the frontend configuration accordingly.
 
 ### CORS Configuration
 
-The `app.py` file in the backend specifies allowed origins for CORS. By default, it includes:
-
-```python
-origins = [
-    "http://localhost:3000",
-    "http://172.17.0.1:3000",
-]
-```
-
-Add or modify origins as needed.
+The backend must allow requests from the frontend's origin. Check the CORS configuration in `backend/app.py` and update the allowed origins for your local or deployed setup.
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
+Contributions and suggestions are welcome.
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a pull request.
+1. Fork the repository if you are contributing through GitHub.
+2. Create a branch for your changes.
+3. Make and test your changes.
+4. Commit your changes.
+5. Submit a pull request if appropriate.
 
-## License [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project includes an MIT License badge. Refer to the repository's `LICENSE` file for the applicable license terms and copyright notices.
 
 ## Contact
 
-Developed by [Aditya Mishra](https://github.com/Aditya-Mishra799). For any inquiries, please contact me via [adityamishra9124@gmail.com](mailto:adityamishra9124@gmail.com).
+**Developer:** Reetika
 
-**LinkedIn:** [Aditya Mishra](https://www.linkedin.com/in/aditya-mishra-b4050a291/)
-
-**LeetCode:** [Aditya Mishra](https://leetcode.com/aditya-mishr)
+**GitHub:** [reetika356](https://github.com/reetika356)
 
 ---
 
-Thank you for using the NLP Speech Recognition and Translation Project! We hope you find it helpful and easy to use.
+Thank you for checking out the NLP Speech Recognition and Translation Project! 🌍
