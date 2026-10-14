@@ -46,8 +46,8 @@ const getVoiceForText = async (text, language) => {
     const requestBody = {
         text: text,
         lang: language,
-     }
-    const url = 'http://127.0.0.1:8000/textToSpeech'
+    };
+    const url = 'http://127.0.0.1:8000/text-to-speech';
     try {
         const response = await fetch(url, {
             method : 'POST',

@@ -1,13 +1,13 @@
-import { Box } from '@chakra-ui/react'
-import React from 'react'
-import NavContainer from './nav_components/NavContainer'
+import { Box } from "@chakra-ui/react";
+import React from "react";
+import NavContainer from "./nav_components/NavContainer";
 
 const Nav = () => {
   return (
     <Box>
-      <NavContainer/>
+      <NavContainer />
     </Box>
-  )
-}
+  );
+};
 
-export default Nav
+export default Nav;

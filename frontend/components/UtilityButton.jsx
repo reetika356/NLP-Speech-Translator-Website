@@ -8,28 +8,32 @@ const UtilityButton = ({
   color,
   isRound = true,
   variant = "ghost",
-  loadColor = "teal.400",
-  fontSize = "18px",
+  loadColor = "signal.cyan",
+  fontSize = "16px",
   tooltip,
   ...rest
 }) => {
-  const loading = <CircularProgress
-  thickness={"6px"}
-  size="4"
-  isIndeterminate
-  color={loadColor}
-/> 
+  const loading = (
+    <CircularProgress
+      thickness="6px"
+      size="4"
+      isIndeterminate
+      color={loadColor}
+    />
+  );
   return (
-    <Tooltip label = {tooltip}>
-      <Box position={"relative"}>
+    <Tooltip label={tooltip} bg="void.700" color="ink.100">
+      <Box position="relative">
         <IconButton
-          icon={isLoading ? loading  :icon}
+          icon={isLoading ? loading : icon}
           isRound={isRound}
-          size="40"
+          size="sm"
           variant={variant}
           onClick={onClick}
           fontSize={fontSize}
           colorScheme={color}
+          color="ink.400"
+          _hover={{ bg: "whiteAlpha.100", color: "ink.100" }}
           p="2"
           {...rest}
         />

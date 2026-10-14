@@ -3,3 +3,6 @@ uvicorn==0.22.0
 googletrans==4.0.0-rc1
 gtts==2.3.0
 pydantic==1.10.7
+SpeechRecognition
+websockets
+python-dotenv

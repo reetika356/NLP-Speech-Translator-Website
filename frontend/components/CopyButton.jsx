@@ -18,7 +18,7 @@ const CopyButton = ({ text }) => {
       onClick={handleCopyButtonClick}
       color={copied ? "green" : "teal"}
       variant="ghost"
-      tooltip={!copied ? `Copy Text` : `Text Copied`}
+      tooltip={!copied ? "Copy text" : "Text copied"}
     />
   );
 };

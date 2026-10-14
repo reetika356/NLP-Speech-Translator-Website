@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Live Speech Translator - Mic Test Client</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; }
+  h1 { font-size: 1.3rem; }
+  label { display: block; margin-top: 12px; font-weight: bold; }
+  select, button { font-size: 1rem; padding: 8px; margin-top: 4px; }
+  button { cursor: pointer; margin-right: 8px; }
+  #status { margin-top: 16px; font-weight: bold; }
+  #log { margin-top: 16px; border: 1px solid #ccc; padding: 12px; height: 260px; overflow-y: auto; background: #fafafa; }
+  .entry { margin-bottom: 10px; }
+  .original { color: #333; }
+  .translated { color: #0a5; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>🎙️ Live Speech Translator — Mic Test Client</h1>
+<p>This page captures your microphone, streams it to the backend, and plays back the translated speech. No ESP32 needed for this test.</p>
+
+<label for="sourceLang">Speak in:</label>
+<select id="sourceLang"></select>
+
+<label for="destLang">Translate to:</label>
+<select id="destLang"></select>
+
+<div style="margin-top:16px;">
+  <button id="startBtn">▶ Start</button>
+  <button id="stopBtn" disabled>⏹ Stop</button>
+</div>
+
+<div id="status">Status: idle</div>
+<div id="log"></div>
+
+<script>
+const LANGUAGES = {
+  en: "english", hi: "hindi", mr: "marathi", fr: "french", de: "german",
+  es: "spanish", ja: "japanese", ko: "korean", pt: "portuguese",
+  ru: "russian", it: "italian"
+};
+
+const sourceSel = document.getElementById("sourceLang");
+const destSel = document.getElementById("destLang");
+const statusEl = document.getElementById("status");
+const logEl = document.getElementById("log");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+
+for (const [code, name] of Object.entries(LANGUAGES)) {
+  sourceSel.innerHTML += `<option value="${code}">${name}</option>`;
+  destSel.innerHTML += `<option value="${code}">${name}</option>`;
+}
+sourceSel.value = "en";
+destSel.value = "hi";
+
+let ws = null;
+let audioCtx = null;
+let processor = null;
+let micSource = null;
+let micStream = null;
+
+// --- Change this to match where your backend is running ---
+const BACKEND_WS_URL = "ws://localhost:8000/ws/translate";
+
+function log(html) {
+  const div = document.createElement("div");
+  div.className = "entry";
+  div.innerHTML = html;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function setStatus(text) {
+  statusEl.textContent = "Status: " + text;
+}
+
+// Downsample Float32 audio from the mic's native sample rate to 16000 Hz
+// and convert it to 16-bit PCM, which is what Deepgram expects.
+function downsampleTo16kPCM16(float32Array, inputSampleRate) {
+  const targetRate = 16000;
+  const ratio = inputSampleRate / targetRate;
+  const outLength = Math.floor(float32Array.length / ratio);
+  const result = new Int16Array(outLength);
+
+  for (let i = 0; i < outLength; i++) {
+    const srcIndex = Math.floor(i * ratio);
+    let sample = float32Array[srcIndex];
+    sample = Math.max(-1, Math.min(1, sample));
+    result[i] = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
+  }
+  return result;
+}
+
+async function start() {
+  startBtn.disabled = true;
+
+  ws = new WebSocket(BACKEND_WS_URL);
+  ws.binaryType = "arraybuffer";
+
+  ws.onopen = async () => {
+    setStatus("connected, sending config...");
+
+    // Step 1: send the language config as the very first message
+    ws.send(JSON.stringify({
+      type: "init",
+      source_lang: sourceSel.value,
+      dest_lang: destSel.value
+    }));
+
+    // Step 2: start capturing the mic
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    micSource = audioCtx.createMediaStreamSource(micStream);
+
+    processor = audioCtx.createScriptProcessor(4096, 1, 1);
+
+    processor.onaudioprocess = (e) => {
+      if (ws.readyState !== WebSocket.OPEN) return;
+      const input = e.inputBuffer.getChannelData(0);
+      const pcm16 = downsampleTo16kPCM16(input, audioCtx.sampleRate);
+      ws.send(pcm16.buffer);
+    };
+
+    // Route through a silent gain node so onaudioprocess fires
+    // without the mic being audibly looped back to speakers.
+    const silentGain = audioCtx.createGain();
+    silentGain.gain.value = 0;
+
+    micSource.connect(processor);
+    processor.connect(silentGain);
+    silentGain.connect(audioCtx.destination);
+
+    setStatus("listening... speak now");
+    stopBtn.disabled = false;
+  };
+
+  ws.onmessage = (event) => {
+    if (typeof event.data === "string") {
+      const msg = JSON.parse(event.data);
+      if (msg.type === "transcript") {
+        log(`<div class="original">🗣️ ${msg.original}</div><div class="translated">🌍 ${msg.translated}</div>`);
+      }
+    } else {
+      // Binary = translated MP3 audio
+      const blob = new Blob([event.data], { type: "audio/mpeg" });
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audio.play();
+    }
+  };
+
+  ws.onerror = (e) => {
+    setStatus("error - check console/backend");
+    console.error("WebSocket error:", e);
+  };
+
+  ws.onclose = () => {
+    setStatus("disconnected");
+    stopBtn.disabled = true;
+    startBtn.disabled = false;
+  };
+}
+
+function stop() {
+  if (processor) processor.disconnect();
+  if (micSource) micSource.disconnect();
+  if (micStream) micStream.getTracks().forEach((t) => t.stop());
+  if (audioCtx) audioCtx.close();
+  if (ws) ws.close();
+
+  setStatus("stopped");
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+}
+
+startBtn.onclick = start;
+stopBtn.onclick = stop;
+</script>
+
+</body>
+</html>

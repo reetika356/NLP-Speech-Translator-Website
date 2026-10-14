@@ -1,0 +1,31 @@
+# Python virtual environments
+venv/
+.venv/
+backend/venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Frontend dependencies and generated builds
+node_modules/
+.next/
+dist/
+
+# PlatformIO generated files
+.pio/
+
+# Temporary audio recordings
+backend/test_audio.wav
+
+# Editor and operating system files
+.vscode/
+.DS_Store
+Thumbs.db
+
+/text

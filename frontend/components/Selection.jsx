@@ -6,7 +6,6 @@ const Selection = ({
   value,
   setValue,
   placeholder = "Please Select",
-  ...rest
 }) => {
   return (
     <Select
@@ -14,11 +13,18 @@ const Selection = ({
       value={value}
       onChange={(e) => setValue(e.target.value)}
       size={{ base: "md", md: "lg" }}
-      textTransform = 'capitalize'
-      fontSize={{ base: "medium", md: "large", lg: 'larger' }}
-      color="gray.800"
-      borderRadius={"full"}
-      w = {{base:'32', md :'sm'}}
+      textTransform="capitalize"
+      fontFamily="mono"
+      fontSize={{ base: "sm", md: "md" }}
+      color="ink.100"
+      bg="transparent"
+      border="none"
+      _focus={{ boxShadow: "none" }}
+      sx={{
+        option: { background: "#10151D", color: "#E7EDF3" },
+      }}
+      borderRadius="full"
+      w={{ base: "28", md: "sm" }}
     >
       {Object.entries(options ?? {}).map(([code, name]) => (
         <option key={code} value={code}>
